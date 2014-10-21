@@ -1051,12 +1051,12 @@ if six.PY2:
 elif six.PY3:
 	cell_changer_code = types.CodeType(
 		1, 0, 1, 2, 0,
-		''.join([
-			chr(dis.opmap['LOAD_FAST']), '\x00\x00',
-			chr(dis.opmap['DUP_TOP']),
-			chr(dis.opmap['STORE_DEREF']), '\x00\x00',
-			chr(dis.opmap['RETURN_VALUE'])
-		]).encode("utf-8"), 
+		b''.join([
+			bytes([dis.opmap['LOAD_FAST']]), b'\x00\x00',
+			bytes([dis.opmap['DUP_TOP']]),
+			bytes([dis.opmap['STORE_DEREF']]), b'\x00\x00',
+			bytes([dis.opmap['RETURN_VALUE']])
+		]),
 		(), (), ('newval',), '<nowhere>', 'cell_changer', 1, b'', ('c',), ()
 	)
 
@@ -1065,7 +1065,7 @@ def _change_cell_value(cell, newval):
     if six.PY2:
         import new
         return new.function(cell_changer_code, {}, None, (), (cell,))(newval)
-    return types.function(cell_changer_code, {}, None, (), (cell,))(newval)
+    return types.FunctionType(cell_changer_code, {}, None, (), (cell,))(newval)
 
 """Constructors for 3rd party libraries
 Note: These can never be renamed due to client compatibility issues"""
